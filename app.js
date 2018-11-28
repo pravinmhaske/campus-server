@@ -6,41 +6,40 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors=require('cors');
 var routes = require('./routes/index');
-// var users = require('./routes/users');
-var Tasks=require('./routes/Tasks');
-// var Students=require('./routes/Students');
+// var user=require('./routes/user');
 var app = express();
-// view engine setup
-//  app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-// app.engine('html', require('ejs').renderFile);
-// app.set('views', __dirname + '/views'); // general config
-// app.engine('html', require('ejs').renderFile);
-// app.set('view engine', 'html');
+
+
+//connection for mongo
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+let configObj=require('./config/config');
+// https:selomart.com/
+// mongodb://sysop:moon@localhost/records
+///mongoose.connect('mongodb://selomart:selomart@https:selomart.com/localshop', { promiseLibrary: require('bluebird') })
+// mongoose.connect('mongodb://52.66.114.206:27017/localshop', { promiseLibrary: require('bluebird') })
+mongoose.connect(configObj.dbconnectUrlProd, { promiseLibrary: require('bluebird') })
+// mongoose.connect(configObj.dbconnectUrlDevelopement, { promiseLibrary: require('bluebird') })
+// .exec()  
+.then(() =>  console.log('connection succesful to database.'))
+  .catch((err) => {
+    console.log('There was problem while connecting to database.Check if mongodb is running.')
+  console.error(err)
+  });
 // Parsers
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+app.use(bodyParser.json({ 'type': '*/*',limit: '20mb' }));
+
 app.use(bodyParser.urlencoded({ extended: false}));
 
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist')));
-// app.use("/views", express.static(__dirname + '/views'));
-// app.use("/dist", express.static(__dirname + '/dist'));
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(cors());
 app.use(logger('dev'));
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: false }));
 
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
-//app.use(express.static('/uploads/'));
 
-/*app.use('/resources',express.static(__dirname + '/images'));
-So now, you can use http://localhost:5000/resources/myImage.jpg to serve all the images instead of http://localhost:5000/images/myImage.jpg. */
-// app.use('/', routes);
-// app.use('/users', users);
-app.use('/get-categories',Tasks);
+app.use('/',routes);
 // app.use('/Students',Students);
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
@@ -59,6 +58,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
+    console.log("Error Message 1 : "+err.message);
     res.render('error', {
       message: err.message,
       error: err
@@ -70,6 +70,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
+  console.log("Error Message 2 : "+err.message);
   res.render('error', {
     message: err.message,
     error: {}

@@ -1,10 +1,10 @@
-let user = require("../models/user.model");
+let cuser = require("../models/user.model");
 exports.loginUser = function (req, res) {
     var entry = {
-        "mobile": req.body.contactnumber,
+        "email": req.body.username,
         "password": req.body.password
     }
-    user.findOne(entry, function (err, result) {
+    cuser.findOne(entry, function (err, result) {
         let success = false, isAuthenticatedUser = false, message = `Something went wrong ,while registering the user. Please try again.`;
         if (err) {
             console.log("err" + err);

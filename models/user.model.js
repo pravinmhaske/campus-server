@@ -36,4 +36,4 @@ var userSchema = new mongoose.Schema({
   added_datetime:{type:Date,default:Date.now}
 });
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('cusers', userSchema);

@@ -4,17 +4,16 @@ exports.loginUser = function (req, res) {
         "email": req.body.username,
         "password": req.body.password
     }
-    cuser.findOne(entry, function (err, result) {
-        let success = false, isAuthenticatedUser = false, message = `Something went wrong ,while registering the user. Please try again.`;
+    cuser.findOne(entry,{email:1, _id:0}, function (err, result) {
+        let success = false, isAuthenticatedUser = false, message = `Unexpected error occured. Please try again.`;
         if (err) {
             console.log("err" + err);
         } else {
-            if (result) {
+           if (result) {
                 success = true;
-                isAuthenticatedUser = true;
+               isAuthenticatedUser = true;
                 message = "You have logged in successfully.";
             } else {
-                success = true;
                 message = "Please check your login details and try again.";
             }
         }

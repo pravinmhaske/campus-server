@@ -1,7 +1,10 @@
 let user = require("../models/user.model");
 exports.registerUser = function (req, res) {
-    let query = { $or: [{ "mobile": req.body.contactnumber }, 
-    { "email": req.body.email }] };
+    // let query = { $or: [{ "mobile": req.body.contactnumber }, 
+    // { "email": req.body.email }] };
+    let email=req.body.username;
+    let query = { "email": email };
+
     user.findOne(query, function (err, result) {
         let success = false, rowsInserted = 0, isUsernameAlreadyPresent = false, message = `Something went wrong ,while registering the user. Please try again.`;
         if (err) {
@@ -12,45 +15,13 @@ exports.registerUser = function (req, res) {
             if (result) {
                 success = true;
                 isUsernameAlreadyPresent = true;
-                message = `Emaild or contact number already registered.Try with different input.`;
+                message = `Emaild is already registered.Try with different id.`;
                 res.json({ success: success, rowsInserted: rowsInserted, isUsernameAlreadyPresent: isUsernameAlreadyPresent, message: message });
             } else { //if user not found ,then save new user in db
-                var entry;
-                if (!req.body.isSeller) { //if not seller
-                    entry = {
-                        mobile: req.body.contactnumber,
-                        email: req.body.email,
-                        isseller: req.body.isSeller,
-                        password: req.body.password
-                    }
-                } else {
-                    entry = { //if seller
-                        mobile: req.body.contactnumber,
-                        email: req.body.email,
-                        isseller: req.body.isSeller,
-                        password: req.body.password,
-                        seller: {
-                            shopname: req.body.shopname,
-                            shopowner: req.body.shopownername,
-                            imgbanner:"",
-                            likes:[],
-                            website:req.body.website,
-                            shopinfo: `Thanks for visiting our page give use more 
-                            opportunities to serve you better.`,
-                            outlets: [
-                                {
-                                    address: req.body.address,
-                                    Itemname: req.body.address,
-                                    location: req.body.lat_long_details,
-                                    workinghrs: req.body.working_hours,
-                                    city: req.body.city,
-                                    zip: req.body.zip,
-                                    mobile: req.body.contactnumber
-                                }
-                            ]
-                        }
-                    }
-                };
+                let entry = {
+                    email: req.body.email,
+                    password: req.body.password
+                }
                 let userObj = new user(entry);
                 userObj.save(function (err, result) {
                     // let rowsInserted = 1;
@@ -68,12 +39,8 @@ exports.registerUser = function (req, res) {
                         }
                     }
                     res.json({ success: success, rowsInserted: rowsInserted, isUsernameAlreadyPresent: isUsernameAlreadyPresent, message: message });
-
                 });
-
             }
-
-
         }
     });
 

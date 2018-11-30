@@ -19,7 +19,7 @@ exports.registerUser = function (req, res) {
                 res.json({ success: success, rowsInserted: rowsInserted, isUsernameAlreadyPresent: isUsernameAlreadyPresent, message: message });
             } else { //if user not found ,then save new user in db
                 let entry = {
-                    email: req.body.email,
+                    email: email,
                     password: req.body.password
                 }
                 let userObj = new user(entry);
